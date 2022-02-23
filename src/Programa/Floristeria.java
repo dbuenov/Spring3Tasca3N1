@@ -29,7 +29,7 @@ public class Floristeria {
 	private Floristeria() {
 		this.articles = new ArrayList<Article>();
 		this.tickets = new ArrayList<Ticket>();
-		codiTicket=0;
+		codiTicket=1;
 		stockArbres=0;
 		stockFlors=0;
 		stockDecoracions=0;		
@@ -77,6 +77,11 @@ public class Floristeria {
 		}	
 	} 
 	
+	public void addTicket(Ticket ticket) {
+		tickets.add(ticket);
+		this.codiTicket++;
+	}
+	
 	public int stockArbres() {
 		return stockArbres;
 	}
@@ -102,9 +107,7 @@ public class Floristeria {
 	}
 
 	public int getCodiTicket() {
-		int codiActual = codiTicket;
-		codiTicket++;
-		return codiActual;
+		return codiTicket;
 	}
 	
 	

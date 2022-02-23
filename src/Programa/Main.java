@@ -39,6 +39,11 @@ public class Main {
 					break;
 			case 12:creaTicketCompra(floristeria);
 					break;	
+			case 13:llistaDeTickets(floristeria);
+					break;	
+			case 14:totalGanancia(floristeria);
+					break;	
+					
 			case 0: System.out.println("Gràcies per utilitzar l'aplicació");
 					sortir = true;
 					break;
@@ -50,24 +55,26 @@ public class Main {
 		Scanner entrada = new Scanner(System.in);
 		byte opcio;
 		final byte MINIMO = 0;
-		final byte MAXIMO = 12;
+		final byte MAXIMO = 14;
 
 		do{
 			System.out.println("\nMENú PRINCIPAL");
-			System.out.println(" 1.Crear Floristeria");
-			System.out.println(" 2.Carregar Floristeria");
-			System.out.println(" 3.Afegir arbre");
-			System.out.println(" 4.Afegir flor");
-			System.out.println(" 5.Afegir decoracio");
-			System.out.println(" 6.Imprimir Stock");
-			System.out.println(" 7.Retirar arbre");
-			System.out.println(" 8.Retirar flor");
-			System.out.println(" 9.Retirar decoracio");
-			System.out.println("10.Imprimir Quantitat Stock");
-			System.out.println("11.Imprimir Valor Total");
-			System.out.println("12.Crea ticket de compra");
+			System.out.println(" 1. Crear Floristeria");
+			System.out.println(" 2. Carregar Floristeria");
+			System.out.println(" 3. Afegir arbre");
+			System.out.println(" 4. Afegir flor");
+			System.out.println(" 5. Afegir decoracio");
+			System.out.println(" 6. Imprimir Stock");
+			System.out.println(" 7. Retirar arbre");
+			System.out.println(" 8. Retirar flor");
+			System.out.println(" 9. Retirar decoracio");
+			System.out.println("10. Imprimir Quantitat Stock");
+			System.out.println("11. Imprimir Valor Total");
+			System.out.println("12. Crea ticket de compra");
+			System.out.println("13. Mostra llista de compres antigues");
+			System.out.println("14. Total de diners guanyats");
 
-			System.out.println(" 0.Sortir de l'aplicació.\n");
+			System.out.println(" 0. Sortir de l'aplicació.\n");
 			opcio = entrada.nextByte();
 			if(opcio < MINIMO || opcio > MAXIMO){
 				System.out.println("Escull una opció vàlida");
@@ -118,7 +125,6 @@ public class Main {
 		System.out.println(floristeria.creaStock());
 	}
 
-
 	public static void retirarArbre(Floristeria floristeria){
 		Article arbreBuscat = creaArbre();
 		Article arbreTrobat = buscaArticle(floristeria, arbreBuscat);
@@ -161,9 +167,62 @@ public class Main {
 
 	public static void creaTicketCompra(Floristeria floristeria) {
 		Ticket ticket = new Ticket(floristeria.getCodiTicket());
-		System.out.println("Quin tipus d'article vols afegir?");
+		boolean sortir = false;
 		
+		do{
+			switch(menuTicket()){
+				case 1:	Article arbreBuscat = creaArbre();
+						Article arbreTrobat = buscaArticle(floristeria, arbreBuscat);
+						if (arbreTrobat!=null) {
+							ticket.addArticle(arbreTrobat);
+							floristeria.removeArticle(arbreTrobat);
+							System.out.println("He afegit l'arbre al ticket");
+						}
+						break;
+				case 2: Article florBuscada = creaFlor();
+						Article florTrobada = buscaArticle(floristeria, florBuscada);
+						if (florTrobada!=null) {
+							ticket.addArticle(florTrobada);
+							floristeria.removeArticle(florTrobada);
+							System.out.println("He afegit la flor al ticket");
+						}	
+						break;
+				case 3: Article decoracioBuscada = creaDecoracio();
+						Article decoracioTrobada = buscaArticle(floristeria, decoracioBuscada);
+						if (decoracioTrobada!=null) {
+							ticket.addArticle(decoracioTrobada);
+							floristeria.removeArticle(decoracioTrobada);
+							System.out.println("He afegit la decoracio al ticket");
+						}	
+						break;	
+				case 0: sortir = true;
+						break;
+			}
+		}while(!sortir);
+		floristeria.addTicket(ticket);
 	}
+	
+	public static byte menuTicket(){
+		
+		Scanner entrada = new Scanner(System.in);
+		byte opcio;
+		final byte MINIMO = 0;
+		final byte MAXIMO = 3;
+
+		do{
+			System.out.println("\nMENú PRINCIPAL");
+			System.out.println(" 1.Afegir arbre al ticket");
+			System.out.println(" 2.Afegir flor al ticket");
+			System.out.println(" 3.Afegir decoracio al ticket");
+			
+			System.out.println(" 0.Sortir del ticket\n");
+			opcio = entrada.nextByte();
+			if(opcio < MINIMO || opcio > MAXIMO){
+				System.out.println("Escull una opció vàlida");
+			}
+		}while(opcio < MINIMO || opcio > MAXIMO);
+		return opcio;
+	}	
 	
 	public static Article buscaArticle(Floristeria floristeria, Article article) {
 		ArrayList<Article> llista = floristeria.getArticles();
@@ -236,4 +295,21 @@ public class Main {
 		Article decoracio = new Decoracio(nom,material,preu);
 		return decoracio;
 	}
+	
+	public static void llistaDeTickets(Floristeria floristeria) {
+		ArrayList<Ticket> tickets = floristeria.getTickets();
+		for (Ticket ticket : tickets) {
+			System.out.println(ticket.imprimirTicket());
+		}
+		
+	}
+	
+	public static void totalGanancia(Floristeria floristeria) {
+		ArrayList<Ticket> tickets = floristeria.getTickets();
+		float total=0;
+		for (Ticket ticket : tickets) {
+			total+=ticket.getTotal();
+		}
+		System.out.println("El total de diners guanyats es de "+total+" €");
+	}	
 }
