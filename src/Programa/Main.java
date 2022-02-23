@@ -33,6 +33,11 @@ public class Main {
 					break;
 			case 9: retirarDecoracio(floristeria);
 					break;
+			case 10:imprimirQuatitatStock(floristeria);
+					break;
+			case 11:imprimirValorTotal(floristeria);
+					break;
+					
 					
 			case 0: System.out.println("Gràcies per utilitzar l'aplicació");
 					sortir = true;
@@ -45,19 +50,22 @@ public class Main {
 		Scanner entrada = new Scanner(System.in);
 		byte opcio;
 		final byte MINIMO = 0;
-		final byte MAXIMO = 9;
+		final byte MAXIMO = 11;
 
 		do{
 			System.out.println("\nMENú PRINCIPAL");
-			System.out.println("1. Crear Floristeria");
-			System.out.println("2. Carregar Floristeria");
-			System.out.println("3. Afegir arbre");
-			System.out.println("4. Afegir flor");
-			System.out.println("5. Afegir decoracio");
-			System.out.println("6. Imprimir Stock");
-			System.out.println("7. Retirar arbre");
-			System.out.println("8. Retirar flor");
-			System.out.println("9. Retirar decoracio");
+			System.out.println("1.  Crear Floristeria");
+			System.out.println("2.  Carregar Floristeria");
+			System.out.println("3.  Afegir arbre");
+			System.out.println("4.  Afegir flor");
+			System.out.println("5.  Afegir decoracio");
+			System.out.println("6.  Imprimir Stock");
+			System.out.println("7.  Retirar arbre");
+			System.out.println("8.  Retirar flor");
+			System.out.println("9.  Retirar decoracio");
+			System.out.println("10. Imprimir Quatitat Stock");
+			System.out.println("11. Imprimir Valor Total");
+					
 			
 			System.out.println("0. Sortir de l'aplicació.\n");
 			opcio = entrada.nextByte();
@@ -238,6 +246,21 @@ public class Main {
 			System.out.println("No he trobat la decoracio");
 		}					
 	}
+	
+	public static void imprimirQuatitatStock(Floristeria floristeria){
+		System.out.println("ARBRES:");
+		System.out.println("      "+floristeria.stockArbres());
+		System.out.println("FLORS:");
+		System.out.println("      "+floristeria.stockFlors());
+		System.out.println("DECORACIONS:");
+		System.out.println("      "+floristeria.stockDecoracions());
+	}
+	
+	public static void imprimirValorTotal(Floristeria floristeria){
+		System.out.println("La Floristeria té un valor total de "+floristeria.getValorFloristeria()+" €");
+	}
+	
+	
 	
 	
 
