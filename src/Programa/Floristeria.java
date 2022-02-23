@@ -16,6 +16,8 @@ public class Floristeria {
 	
 	private String nom;
 	private ArrayList<Article> articles;
+	private ArrayList<Ticket> tickets;
+	private int codiTicket;
 	private int stockArbres;
 	private int stockFlors;
 	private int stockDecoracions;
@@ -26,6 +28,8 @@ public class Floristeria {
 		
 	private Floristeria() {
 		this.articles = new ArrayList<Article>();
+		this.tickets = new ArrayList<Ticket>();
+		codiTicket=0;
 		stockArbres=0;
 		stockFlors=0;
 		stockDecoracions=0;		
@@ -92,9 +96,19 @@ public class Floristeria {
 	public ArrayList<Article> getArticles(){
 		return articles;
 	}
+		
+	public ArrayList<Ticket> getTickets() {
+		return tickets;
+	}
+
+	public int getCodiTicket() {
+		int codiActual = codiTicket;
+		codiTicket++;
+		return codiActual;
+	}
+	
 	
 	//metode que crea un String amb tot l'stock
-	
 	public String creaStock() {
 		String stock="";
 		for (Article article : articles) {
