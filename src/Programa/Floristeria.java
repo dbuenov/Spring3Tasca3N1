@@ -3,11 +3,14 @@ package Programa;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Properties;
 import java.util.StringTokenizer;
 
 import Articles.*;
@@ -18,24 +21,29 @@ public class Floristeria {
 	private ArrayList<Article> articles;
 	private ArrayList<Ticket> tickets;
 	private int codiTicket;
+	private int idArticle;
 	private int stockArbres;
 	private int stockFlors;
 	private int stockDecoracions;
 	private float valorFloristeria;
+	private float valorVentes;
 	
-	//faig servir singleton per asegurar-me de no crear més d'una floristeria
+	
 	private static Floristeria floristeria;
 		
 	private Floristeria() {
-		this.articles = new ArrayList<Article>();
-		this.tickets = new ArrayList<Ticket>();
+		articles = new ArrayList<Article>();
+		tickets = new ArrayList<Ticket>();
 		codiTicket=1;
+		idArticle=1;
 		stockArbres=0;
 		stockFlors=0;
 		stockDecoracions=0;		
-		this.valorFloristeria=0;
+		valorFloristeria=0;
+		valorVentes=0;		
 	}
 	
+	//faig servir singleton per asegurar-me de no crear més d'una floristeria
 	public static Floristeria getFloristeria() {
 		if(floristeria == null) {
 			floristeria = new Floristeria();			
@@ -50,8 +58,12 @@ public class Floristeria {
 	public void setNom(String nom) {
 		this.nom=nom;
 	}
+	
+	public int getIdArticle() {
+		return idArticle;
+	}
 
-	//quan afeigeix un article sumo un a l'stock
+	//quan afeigeix un article sumo un a l'stock i un als id's
 	public void addArticle(Article article) {
 		articles.add(article);
 		this.valorFloristeria += article.getPreu();
@@ -62,9 +74,11 @@ public class Floristeria {
 		}else if (article instanceof Decoracio) {
 			stockDecoracions++;
 		}
+		idArticle++;
+		
 	}
 	
-	//quan esborro un article resto un a l'stock	
+	//quan esborro un article resto un a l'stock, al id no faig res
 	public void removeArticle(Article article) {
 		this.articles.remove(article);
 		this.valorFloristeria -= article.getPreu();
@@ -120,13 +134,23 @@ public class Floristeria {
 		return stock;		
 	}
 	
+	//metode que crea un String amb el tickets
+	public String creaTickets() {
+		String vendes="";
+		for (Ticket ticket : tickets) {
+			vendes+=ticket.toString();
+		}	
+		return vendes;
+	}
+	
 	/*
 	 * metode que crea un fitxer amb el contingut de l'stock
 	 * el fitxer está separat per comes "," i cada linea es un producte	
 	*/
 	
-	public void escriuStock(String fitxer) {
+	public void escriuStock() {
 		
+		String fitxer = "Floristeria_"+this.nom+".txt";
 		String stock=creaStock();
 		File file = new File(fitxer);
 		FileWriter fileWriter = null;
@@ -166,32 +190,28 @@ public class Floristeria {
 	}
 	
 	//metode que llegeix un fitxer amb stock i el guarda en memoria per treballar
-	public void llegeixStock(String fitxer) {
-
-		File file = new File(fitxer);
+	public void llegeixStock() {
+		File file = new File("Floristeria_"+nom.toLowerCase()+".txt");
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
-
 		try {
 			fileReader = new FileReader(file, StandardCharsets.UTF_8);
 			bufferedReader = new BufferedReader(fileReader);
 			String linea = bufferedReader.readLine();
-			
 			while (linea != null) {
 				Article article = null;
-				
 				StringTokenizer separador = new StringTokenizer(linea,",");
 				String tipus = separador.nextToken();
-				String nom = separador.nextToken();
+				int id = Integer.parseInt(separador.nextToken());
 				String caracteristica = separador.nextToken();
 				float preu = Float.parseFloat(separador.nextToken());
 				
 				//miro el tipus d'Article i el creo amb el seu contructor
 				
 				if (tipus.equalsIgnoreCase("arbre")) {
-					article = new Arbre(nom,caracteristica,preu);
+					article = new Arbre(id,caracteristica,preu);
 				}else if (tipus.equalsIgnoreCase("flor")) {
-					article = new Flor(nom,caracteristica,preu);				
+					article = new Flor(id,caracteristica,preu);				
 				}else if (tipus.equalsIgnoreCase("decoracio")) {
 					Material material;
 					if (caracteristica.equals("FUSTA")) {
@@ -199,38 +219,94 @@ public class Floristeria {
 					}else {
 						material = Material.Plastic;
 					}
-					article = new Decoracio(nom,material,preu);
+					article = new Decoracio(id,material,preu);
 				}
 				addArticle(article);
 				linea = bufferedReader.readLine();				
 			}
 			System.out.println("Carregat l'stock");
-
 		} catch (IOException ex) {
-			System.err.println(ex.getMessage());
-
+			System.out.println("No existeix la floristeria, es crea nova");
 		} finally {
-
 			if (bufferedReader != null) {
 				try {
-
 					bufferedReader.close();
 				} catch (IOException ex) {
-
 					System.err.println(ex.getMessage());
 				}
 			}
 
 			if (fileReader != null) {
 				try {
-
 					fileReader.close();
 				} catch (IOException ex) {
-
 					System.err.println(ex.getMessage());
 				}
 			}
 		}
+	}
+	
+	public void recuperaFloristeria() {
+					
+		Properties propietats = new Properties();
+		FileInputStream dades;
+		try {
+			dades = new FileInputStream("Backup_"+nom+".data");
+			propietats.load(dades);
+			this.codiTicket=Integer.parseInt(propietats.getProperty("codiTicket"));
+			this.valorVentes=Float.parseFloat(propietats.getProperty("valorVentes"));
+			dades.close();
+			llegeixStock();			
+						
+		} catch (FileNotFoundException e) {
+			System.out.println("No trobo el fitxer de backup");
+		}catch (IOException e2) {
+			System.out.println("No puc llegir el fitxer de backup");
+		}
+						
+	}
+			
+	public void guardaFloristeria() {
+		Properties propietats = new Properties();
+		String fitxer = "Backup_"+nom+".data";
+		File file = new File(fitxer);
+		FileWriter fileWriter = null;
+		BufferedWriter bufferedWriter = null;
+		
+		propietats.setProperty("codiTicket",String.valueOf(codiTicket));
+		propietats.setProperty("valorVentes",String.valueOf(valorVentes));
+		
+				
+		try {
+			fileWriter = new FileWriter(file);
+			bufferedWriter = new BufferedWriter(fileWriter);
+			propietats.store(bufferedWriter,"propietats");
+			escriuStock();
+			
+		} catch (IOException e) {
+			System.err.println(e.getMessage());
+		}
+
+		finally {
+
+			if (bufferedWriter != null) {
+				try {
+					bufferedWriter.close();
+				} catch (IOException e) {
+					System.err.println(e.getMessage());
+				}
+			}
+
+			if (fileWriter != null) {
+				try {
+					fileWriter.close();
+				} catch (IOException e) {
+					System.err.println(e.getMessage());
+				}
+			}
+
+		}
+		
 	}
 }
 		

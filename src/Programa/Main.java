@@ -1,7 +1,12 @@
 package Programa;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Properties;
 import java.util.Scanner;
 
 import Articles.*;
@@ -15,15 +20,9 @@ public class Main {
 
 		do{
 			switch(menu()){
-			case 1:	creaFloristeria(floristeria);
+			case 1:	obreFloristeria(floristeria);
 					break;
-			case 2: carregaFloristeria(floristeria);
-					break;
-			case 3: afegirArbre(floristeria);
-					break;
-			case 4: afegirFlor(floristeria);
-					break;
-			case 5: afegirDecoracio(floristeria);
+			case 2: afegirArticle(floristeria);
 					break;
 			case 6: imprimirStock(floristeria);
 					break;
@@ -42,9 +41,8 @@ public class Main {
 			case 13:llistaDeTickets(floristeria);
 					break;	
 			case 14:totalGanancia(floristeria);
-					break;	
-					
-			case 0: System.out.println("Gràcies per utilitzar l'aplicació");
+					break;						
+			case 0: sortir(floristeria); 
 					sortir = true;
 					break;
 			}
@@ -59,15 +57,14 @@ public class Main {
 
 		do{
 			System.out.println("\nMENú PRINCIPAL");
-			System.out.println(" 1. Crear Floristeria");
-			System.out.println(" 2. Carregar Floristeria");
-			System.out.println(" 3. Afegir arbre");
-			System.out.println(" 4. Afegir flor");
-			System.out.println(" 5. Afegir decoracio");
-			System.out.println(" 6. Imprimir Stock");
-			System.out.println(" 7. Retirar arbre");
-			System.out.println(" 8. Retirar flor");
-			System.out.println(" 9. Retirar decoracio");
+			System.out.println(" 1. Obre Floristeria");
+			System.out.println("---------------------------------------");
+			System.out.println(" 2. Afegir article");
+			System.out.println(" 3. Retirar article");
+			System.out.println("---------------------------------------");
+			System.out.println(" 6. Imprimir Stock Total");
+			
+			
 			System.out.println("10. Imprimir Quantitat Stock");
 			System.out.println("11. Imprimir Valor Total");
 			System.out.println("12. Crea ticket de compra");
@@ -82,52 +79,48 @@ public class Main {
 		}while(opcio < MINIMO || opcio > MAXIMO);
 		return opcio;
 	}
-
-	public static void creaFloristeria(Floristeria floristeria){
-		//creo la floristeria en blanc
-
+	
+	//Case 1 Crea la floristeria, si ja estava creada carrega les dades antigues
+	public static void obreFloristeria(Floristeria floristeria){
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Nom de la Floristeria:");
 		String nom = sc.nextLine();
-		floristeria.setNom(nom);
-		System.out.println("Creada la floristeria "+floristeria.getNom());			
+		floristeria.setNom("Floristeria_"+nom.toLowerCase());
+		floristeria.recuperaFloristeria();					
 	}
-
-	public static void carregaFloristeria(Floristeria floristeria){
-		//creo la floristeria i carrego l'stock 
-		//TODO: crear un fitxer de configuració amb el nom de la floristeria 
-		//i el fitxer de l'stock
-		Scanner sc = new Scanner(System.in);
-		System.out.println("Fitxer d'stock:");
-		String file = sc.nextLine();	
-		floristeria.llegeixStock(file);		
-	}
-
-	public static void afegirArbre(Floristeria floristeria){
-		Article arbre = creaArbre();
-		floristeria.addArticle(arbre);
-		System.out.println(arbre.toString());				
-	}
-
-	public static void afegirFlor(Floristeria floristeria){
-		Article flor = creaFlor();
-		floristeria.addArticle(flor);
-		System.out.println(flor.toString());				
-	}
-
-	public static void afegirDecoracio(Floristeria floristeria){
-		Article decoracio = creaDecoracio();
-		floristeria.addArticle(decoracio);
-		System.out.println(decoracio.toString());				
-	}
+	
+	//Case 2 Afegir article (Arbre, Flor o Decoracio)
+	public static void afegirArticle(Floristeria floristeria) {
+		int id = floristeria.getIdArticle();
+		Article article = null;
+		boolean sortir = false;
+		do{
+			switch(menuTipus()){
+				case 1:	article = creaArbre(id);
+						break;
+				case 2: article = creaFlor(id);
+						break;
+				case 3: article = creaDecoracio(id);
+						break;	
+				case 0: sortir = true;
+						break;
+			}
+			floristeria.addArticle(article);
+			System.out.println(article.toString());			
+		}while(!sortir);		
+	}	
 
 	public static void imprimirStock(Floristeria floristeria) {
 		System.out.println(floristeria.creaStock());
+		System.out.println(floristeria.getTickets().get(0).toString());
 	}
 
 	public static void retirarArbre(Floristeria floristeria){
-		Article arbreBuscat = creaArbre();
-		Article arbreTrobat = buscaArticle(floristeria, arbreBuscat);
+		mostraArticleTipus(floristeria);
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Id de l'arbre a retirar:");
+		int id = sc.nextInt();
+		Article arbreTrobat = buscaArticle(floristeria, id);
 		if (arbreTrobat!=null) {
 			floristeria.removeArticle(arbreTrobat);
 			System.out.println("He esborrat l'arbre");
@@ -135,8 +128,11 @@ public class Main {
 	}
 
 	public static void retirarFlor(Floristeria floristeria){
-		Article florBuscada = creaFlor();
-		Article florTrobada = buscaArticle(floristeria, florBuscada);
+		mostraArticleTipus(floristeria);
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Id de la flor a retirar:");
+		int id = sc.nextInt();
+		Article florTrobada = buscaArticle(floristeria, id);
 		if (florTrobada!=null) {
 			floristeria.removeArticle(florTrobada);
 			System.out.println("He esborrat la flor");
@@ -144,8 +140,11 @@ public class Main {
 	}
 
 	public static void retirarDecoracio(Floristeria floristeria){
-		Article decoracioBuscada = creaDecoracio();
-		Article decoracioTrobada = buscaArticle(floristeria, decoracioBuscada);
+		mostraArticleTipus(floristeria);
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Id de la decoracio a retirar:");
+		int id = sc.nextInt();
+		Article decoracioTrobada = buscaArticle(floristeria, id);
 		if (decoracioTrobada!=null) {
 			floristeria.removeArticle(decoracioTrobada);
 			System.out.println("He esborrat la decoracio");
@@ -168,27 +167,35 @@ public class Main {
 	public static void creaTicketCompra(Floristeria floristeria) {
 		Ticket ticket = new Ticket(floristeria.getCodiTicket());
 		boolean sortir = false;
+		Scanner sc = new Scanner(System.in);
+		int id;
 		
 		do{
-			switch(menuTicket()){
-				case 1:	Article arbreBuscat = creaArbre();
-						Article arbreTrobat = buscaArticle(floristeria, arbreBuscat);
+			switch(menuTipus()){
+				case 1:	mostraArticleTipus(floristeria);
+						System.out.println("Id de l'arbre a retirar:");
+						id = sc.nextInt();
+						Article arbreTrobat = buscaArticle(floristeria, id);
 						if (arbreTrobat!=null) {
 							ticket.addArticle(arbreTrobat);
 							floristeria.removeArticle(arbreTrobat);
 							System.out.println("He afegit l'arbre al ticket");
 						}
 						break;
-				case 2: Article florBuscada = creaFlor();
-						Article florTrobada = buscaArticle(floristeria, florBuscada);
+				case 2: mostraArticleTipus(floristeria);
+						System.out.println("Id de la flor a retirar:");
+						id = sc.nextInt();
+						Article florTrobada = buscaArticle(floristeria, id);
 						if (florTrobada!=null) {
 							ticket.addArticle(florTrobada);
 							floristeria.removeArticle(florTrobada);
 							System.out.println("He afegit la flor al ticket");
 						}	
 						break;
-				case 3: Article decoracioBuscada = creaDecoracio();
-						Article decoracioTrobada = buscaArticle(floristeria, decoracioBuscada);
+				case 3: mostraArticleTipus(floristeria);
+						System.out.println("Id de la decoracio a retirar:");
+						id = sc.nextInt();
+						Article decoracioTrobada = buscaArticle(floristeria, id);
 						if (decoracioTrobada!=null) {
 							ticket.addArticle(decoracioTrobada);
 							floristeria.removeArticle(decoracioTrobada);
@@ -202,7 +209,7 @@ public class Main {
 		floristeria.addTicket(ticket);
 	}
 	
-	public static byte menuTicket(){
+	public static byte menuTipus(){
 		
 		Scanner entrada = new Scanner(System.in);
 		byte opcio;
@@ -211,11 +218,11 @@ public class Main {
 
 		do{
 			System.out.println("\nMENú PRINCIPAL");
-			System.out.println(" 1.Afegir arbre al ticket");
-			System.out.println(" 2.Afegir flor al ticket");
-			System.out.println(" 3.Afegir decoracio al ticket");
+			System.out.println(" 1.Arbre");
+			System.out.println(" 2.Flor");
+			System.out.println(" 3.Decoracio");
 			
-			System.out.println(" 0.Sortir del ticket\n");
+			System.out.println(" 0.Sortir\n");
 			opcio = entrada.nextByte();
 			if(opcio < MINIMO || opcio > MAXIMO){
 				System.out.println("Escull una opció vàlida");
@@ -224,13 +231,14 @@ public class Main {
 		return opcio;
 	}	
 	
-	public static Article buscaArticle(Floristeria floristeria, Article article) {
+	//donat un id d'article retorna l'article concret
+	public static Article buscaArticle(Floristeria floristeria, int id) {
 		ArrayList<Article> llista = floristeria.getArticles();
 		boolean trobat = false;
 		Article articleEnStock=null;
 		int i=0;
 		while(!trobat&&i<llista.size()) {
-			if(llista.get(i).equals(article)) {
+			if(llista.get(i).getId()==id) {
 				trobat=true;
 			}
 			i++;			
@@ -245,34 +253,28 @@ public class Main {
 		return articleEnStock;
 	}
 	
-	public static Article creaArbre() {
+	public static Article creaArbre(int id) {
 		Scanner sc = new Scanner(System.in);
-		System.out.println("Nom de l'arbre:");
-		String nom = sc.nextLine();
 		System.out.println("Alçada de l'arbre:");
 		String alçada = sc.nextLine();
 		System.out.println("Preu de l'arbre:");
 		float preu = sc.nextFloat();
-		Article arbre = new Arbre(nom,alçada,preu);
+		Article arbre = new Arbre(id,alçada,preu);
 		return arbre;		
 	}
 	
-	public static Article creaFlor() {
+	public static Article creaFlor(int id) {
 		Scanner sc = new Scanner(System.in);
-		System.out.println("Nom de la flor:");
-		String nom = sc.nextLine();
 		System.out.println("Color de la flor:");
 		String color = sc.nextLine();
 		System.out.println("Preu de la flor:");
 		float preu = sc.nextFloat();
-		Article flor = new Flor(nom,color,preu);
+		Article flor = new Flor(id,color,preu);
 		return flor;
 	}
 	
-	public static Article creaDecoracio() {
+	public static Article creaDecoracio(int id) {
 		Scanner sc = new Scanner(System.in);
-		System.out.println("Nom de la decoracio:");
-		String nom = sc.nextLine();
 		System.out.println("Preu de la decoracio:");
 		Material material;
 		float preu = sc.nextFloat();
@@ -292,7 +294,7 @@ public class Main {
 			material = Material.Fusta;
 		}
 
-		Article decoracio = new Decoracio(nom,material,preu);
+		Article decoracio = new Decoracio(id,material,preu);
 		return decoracio;
 	}
 	
@@ -312,4 +314,40 @@ public class Main {
 		}
 		System.out.println("El total de diners guanyats es de "+total+" €");
 	}	
+	
+	//metode que mostra per pantalla els articles de cada tipus que hi ha en stock
+	public static void mostraArticleTipus (Floristeria floristeria) {
+		boolean sortir = false;
+		ArrayList<Article> articles = floristeria.getArticles();
+		
+		do{
+			switch(menuTipus()){
+				case 1:	for (Article article : articles) {
+							if (article instanceof Arbre) {
+								System.out.println(article.toString());
+							}
+						}	
+						break;
+				case 2: for (Article article : articles) {
+							if (article instanceof Flor) {
+								System.out.println(article.toString());
+							}
+						}	
+						break;
+				case 3: for (Article article : articles) {
+							if (article instanceof Decoracio) {
+								System.out.println(article.toString());
+							}
+						}	
+						break;	
+				case 0: sortir = true;
+						break;
+			}
+		}while(!sortir);		
+	}		
+	
+	public static void sortir(Floristeria floristeria) {
+		floristeria.guardaFloristeria();		
+		System.out.println("Gràcies per utilitzar l'aplicació");
+	}
 }

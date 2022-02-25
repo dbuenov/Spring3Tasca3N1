@@ -17,6 +17,10 @@ public class Ticket {
 		total = 0;
 		numeroArticles = 0;
 	}
+	
+	public Ticket(int codi, ArrayList<Article> articles, float total, int numeroArticles) {
+		
+	}
 
 	public ArrayList<Article> getArticles() {
 		return articles;
@@ -45,12 +49,23 @@ public class Ticket {
 	public String imprimirTicket() {
 		String ticket="Ticket Numero: "+this.codi+"\n";
 		for (Article article : articles) {
-			ticket += article.getNom()+" "+article.getPreu()+"\n";
+			ticket += article.getId()+" "+article.getPreu()+"\n";
 		}
 		ticket += "Numero d'articles: "+numeroArticles+"\n";
 		ticket += "Total: "+total+" €";
 		return ticket;
 	}
+
+	@Override
+	public String toString() {
+		String articlesTicket="";
+		for (Article article : this.articles) {
+			articlesTicket+=article.getId()+",";
+		}
+		return codi+","+numeroArticles+","+total+","+articlesTicket;
+	}
+	
+	
 	
 	
 }
