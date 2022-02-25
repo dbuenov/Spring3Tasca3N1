@@ -24,13 +24,9 @@ public class Main {
 					break;
 			case 2: afegirArticle(floristeria);
 					break;
-			case 6: imprimirStock(floristeria);
+			case 3: retirarArticle(floristeria);
 					break;
-			case 7: retirarArbre(floristeria);
-					break;
-			case 8: retirarFlor(floristeria);
-					break;	
-			case 9: retirarDecoracio(floristeria);
+			case 4: imprimirStock(floristeria);
 					break;
 			case 10:imprimirQuatitatStock(floristeria);
 					break;
@@ -62,11 +58,11 @@ public class Main {
 			System.out.println(" 2. Afegir article");
 			System.out.println(" 3. Retirar article");
 			System.out.println("---------------------------------------");
-			System.out.println(" 6. Imprimir Stock Total");
-			
-			
-			System.out.println("10. Imprimir Quantitat Stock");
-			System.out.println("11. Imprimir Valor Total");
+			System.out.println(" 4. Imprimir Stock Total");
+			System.out.println(" 5. Imprimir Stock per tipus Article");
+			System.out.println(" 6. Imprimir Quantitat Stock");
+			System.out.println(" 7. Imprimir Valor Total");
+			System.out.println("---------------------------------------");
 			System.out.println("12. Crea ticket de compra");
 			System.out.println("13. Mostra llista de compres antigues");
 			System.out.println("14. Total de diners guanyats");
@@ -109,48 +105,27 @@ public class Main {
 			System.out.println(article.toString());			
 		}while(!sortir);		
 	}	
+	
+	//Case 3 Retirar article (Arbre, Flor o Decoracio)	
+	public static void retirarArticle(Floristeria floristeria){
+		mostraArticleTipus(floristeria);
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Id de l'article a retirar:");
+		int id = sc.nextInt();
+		Article articleTrobat = buscaArticle(floristeria, id);
+		if (articleTrobat!=null) {
+			floristeria.removeArticle(articleTrobat);
+			System.out.println("He esborrat l'article");
+		}				
+	}
 
+	//Case 4 Imprimir l'stock total
 	public static void imprimirStock(Floristeria floristeria) {
 		System.out.println(floristeria.creaStock());
 		System.out.println(floristeria.getTickets().get(0).toString());
 	}
 
-	public static void retirarArbre(Floristeria floristeria){
-		mostraArticleTipus(floristeria);
-		Scanner sc = new Scanner(System.in);
-		System.out.println("Id de l'arbre a retirar:");
-		int id = sc.nextInt();
-		Article arbreTrobat = buscaArticle(floristeria, id);
-		if (arbreTrobat!=null) {
-			floristeria.removeArticle(arbreTrobat);
-			System.out.println("He esborrat l'arbre");
-		}				
-	}
-
-	public static void retirarFlor(Floristeria floristeria){
-		mostraArticleTipus(floristeria);
-		Scanner sc = new Scanner(System.in);
-		System.out.println("Id de la flor a retirar:");
-		int id = sc.nextInt();
-		Article florTrobada = buscaArticle(floristeria, id);
-		if (florTrobada!=null) {
-			floristeria.removeArticle(florTrobada);
-			System.out.println("He esborrat la flor");
-		}				
-	}
-
-	public static void retirarDecoracio(Floristeria floristeria){
-		mostraArticleTipus(floristeria);
-		Scanner sc = new Scanner(System.in);
-		System.out.println("Id de la decoracio a retirar:");
-		int id = sc.nextInt();
-		Article decoracioTrobada = buscaArticle(floristeria, id);
-		if (decoracioTrobada!=null) {
-			floristeria.removeArticle(decoracioTrobada);
-			System.out.println("He esborrat la decoracio");
-		}				
-	}
-
+	//Case 6 Imprimir Quantitat d'stock per tipus d'Article
 	public static void imprimirQuatitatStock(Floristeria floristeria){
 		System.out.println("ARBRES:");
 		System.out.println("      "+floristeria.stockArbres());
@@ -317,10 +292,10 @@ public class Main {
 	
 	//metode que mostra per pantalla els articles de cada tipus que hi ha en stock
 	public static void mostraArticleTipus (Floristeria floristeria) {
-		boolean sortir = false;
+		//boolean sortir = false;
 		ArrayList<Article> articles = floristeria.getArticles();
 		
-		do{
+		//do{
 			switch(menuTipus()){
 				case 1:	for (Article article : articles) {
 							if (article instanceof Arbre) {
@@ -340,10 +315,10 @@ public class Main {
 							}
 						}	
 						break;	
-				case 0: sortir = true;
-						break;
+				//case 0: sortir = true;
+					//	break;
 			}
-		}while(!sortir);		
+		//}while(!sortir);		
 	}		
 	
 	public static void sortir(Floristeria floristeria) {
