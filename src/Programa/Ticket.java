@@ -1,5 +1,9 @@
 package Programa;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import Articles.*;
@@ -54,18 +58,6 @@ public class Ticket {
 		ticket += "Numero d'articles: "+numeroArticles+"\n";
 		ticket += "Total: "+total+" €";
 		return ticket;
-	}
-
-	@Override
-	public String toString() {
-		String articlesTicket="";
-		for (Article article : this.articles) {
-			articlesTicket+=article.getId()+",";
-		}
-		return codi+","+numeroArticles+","+total+","+articlesTicket;
-	}
-	
-	
-	
+	}	
 	
 }

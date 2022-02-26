@@ -189,9 +189,109 @@ public class Floristeria {
 		}
 	}
 	
+	public void escriuTickets() {
+		
+		String fitxer = "Tickets_"+this.nom+".txt";
+		String ticketsFloristeria=creaTickets();
+
+		File file = new File(fitxer);
+		FileWriter fileWriter = null;
+		BufferedWriter bufferedWriter = null;
+
+		try {
+			fileWriter = new FileWriter(file);
+			bufferedWriter = new BufferedWriter(fileWriter);
+			if (ticketsFloristeria != null && ticketsFloristeria.length() > 0) {
+				bufferedWriter.write(ticketsFloristeria);
+
+			}
+
+		} catch (IOException e) {
+			System.err.println(e.getMessage());
+		}
+
+		finally {
+
+			if (bufferedWriter != null) {
+				try {
+					bufferedWriter.close();
+				} catch (IOException e) {
+					System.err.println(e.getMessage());
+				}
+			}
+
+			if (fileWriter != null) {
+				try {
+					fileWriter.close();
+				} catch (IOException e) {
+					System.err.println(e.getMessage());
+				}
+			}
+
+		}
+	}
+	
 	//metode que llegeix un fitxer amb stock i el guarda en memoria per treballar
 	public void llegeixStock() {
 		File file = new File("Floristeria_"+nom.toLowerCase()+".txt");
+		FileReader fileReader = null;
+		BufferedReader bufferedReader = null;
+		try {
+			fileReader = new FileReader(file, StandardCharsets.UTF_8);
+			bufferedReader = new BufferedReader(fileReader);
+			String linea = bufferedReader.readLine();
+			while (linea != null) {
+				Article article = null;
+				StringTokenizer separador = new StringTokenizer(linea,",");
+				String tipus = separador.nextToken();
+				int id = Integer.parseInt(separador.nextToken());
+				String caracteristica = separador.nextToken();
+				float preu = Float.parseFloat(separador.nextToken());
+				
+				//miro el tipus d'Article i el creo amb el seu contructor
+				
+				if (tipus.equalsIgnoreCase("arbre")) {
+					article = new Arbre(id,caracteristica,preu);
+				}else if (tipus.equalsIgnoreCase("flor")) {
+					article = new Flor(id,caracteristica,preu);				
+				}else if (tipus.equalsIgnoreCase("decoracio")) {
+					Material material;
+					if (caracteristica.equals("FUSTA")) {
+						material = Material.Fusta;
+					}else {
+						material = Material.Plastic;
+					}
+					article = new Decoracio(id,material,preu);
+				}
+				addArticle(article);
+				linea = bufferedReader.readLine();				
+			}
+			System.out.println("Carregat l'stock");
+		} catch (IOException ex) {
+			System.out.println("No existeix la floristeria, es crea nova");
+		} finally {
+			if (bufferedReader != null) {
+				try {
+					bufferedReader.close();
+				} catch (IOException ex) {
+					System.err.println(ex.getMessage());
+				}
+			}
+
+			if (fileReader != null) {
+				try {
+					fileReader.close();
+				} catch (IOException ex) {
+					System.err.println(ex.getMessage());
+				}
+			}
+		}
+	}
+	
+	//TODO
+	//falta fer aquest metode que pasa un txt a un string
+	public void llegeixTickets() {
+		File file = new File("Tickets_"+nom.toLowerCase()+".txt");
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
 		try {
@@ -282,6 +382,7 @@ public class Floristeria {
 			bufferedWriter = new BufferedWriter(fileWriter);
 			propietats.store(bufferedWriter,"propietats");
 			escriuStock();
+			escriuTickets();
 			
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
