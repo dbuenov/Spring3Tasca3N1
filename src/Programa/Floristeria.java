@@ -28,6 +28,9 @@ public class Floristeria {
 	private float valorFloristeria;
 	private float valorVentes;
 	
+	//inicialitzar i treballar
+	private String ticketsAntics;
+	
 	
 	private static Floristeria floristeria;
 		
@@ -291,63 +294,52 @@ public class Floristeria {
 	//TODO
 	//falta fer aquest metode que pasa un txt a un string
 	public void llegeixTickets() {
-		File file = new File("Tickets_"+nom.toLowerCase()+".txt");
+
+		File file = new File("Tickets_"+this.nom+".txt");
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
+		String ticketsFloristeria=null;
+
 		try {
 			fileReader = new FileReader(file, StandardCharsets.UTF_8);
 			bufferedReader = new BufferedReader(fileReader);
+
 			String linea = bufferedReader.readLine();
 			while (linea != null) {
-				Article article = null;
-				StringTokenizer separador = new StringTokenizer(linea,",");
-				String tipus = separador.nextToken();
-				int id = Integer.parseInt(separador.nextToken());
-				String caracteristica = separador.nextToken();
-				float preu = Float.parseFloat(separador.nextToken());
-				
-				//miro el tipus d'Article i el creo amb el seu contructor
-				
-				if (tipus.equalsIgnoreCase("arbre")) {
-					article = new Arbre(id,caracteristica,preu);
-				}else if (tipus.equalsIgnoreCase("flor")) {
-					article = new Flor(id,caracteristica,preu);				
-				}else if (tipus.equalsIgnoreCase("decoracio")) {
-					Material material;
-					if (caracteristica.equals("FUSTA")) {
-						material = Material.Fusta;
-					}else {
-						material = Material.Plastic;
-					}
-					article = new Decoracio(id,material,preu);
-				}
-				addArticle(article);
-				linea = bufferedReader.readLine();				
+				ticketsFloristeria+=linea;
+				linea = bufferedReader.readLine();
 			}
-			System.out.println("Carregat l'stock");
+
 		} catch (IOException ex) {
-			System.out.println("No existeix la floristeria, es crea nova");
+			System.err.println(ex.getMessage());
+
 		} finally {
+
 			if (bufferedReader != null) {
 				try {
+
 					bufferedReader.close();
 				} catch (IOException ex) {
+
 					System.err.println(ex.getMessage());
 				}
 			}
 
 			if (fileReader != null) {
 				try {
+
 					fileReader.close();
 				} catch (IOException ex) {
+
 					System.err.println(ex.getMessage());
 				}
+
 			}
+
 		}
 	}
 	
-	public void recuperaFloristeria() {
-					
+	public void recuperaFloristeria() {					
 		Properties propietats = new Properties();
 		FileInputStream dades;
 		try {
@@ -356,14 +348,12 @@ public class Floristeria {
 			this.codiTicket=Integer.parseInt(propietats.getProperty("codiTicket"));
 			this.valorVentes=Float.parseFloat(propietats.getProperty("valorVentes"));
 			dades.close();
-			llegeixStock();			
-						
+			llegeixStock();						
 		} catch (FileNotFoundException e) {
 			System.out.println("No trobo el fitxer de backup");
 		}catch (IOException e2) {
 			System.out.println("No puc llegir el fitxer de backup");
-		}
-						
+		}						
 	}
 			
 	public void guardaFloristeria() {
@@ -374,8 +364,7 @@ public class Floristeria {
 		BufferedWriter bufferedWriter = null;
 		
 		propietats.setProperty("codiTicket",String.valueOf(codiTicket));
-		propietats.setProperty("valorVentes",String.valueOf(valorVentes));
-		
+		propietats.setProperty("valorVentes",String.valueOf(valorVentes));		
 				
 		try {
 			fileWriter = new FileWriter(file);
@@ -405,9 +394,7 @@ public class Floristeria {
 					System.err.println(e.getMessage());
 				}
 			}
-
-		}
-		
+		}		
 	}
 }
 		
