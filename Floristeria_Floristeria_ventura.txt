@@ -1,2 +1,0 @@
-Arbre,1,1,1.0
-Decoracio,2,Plastic,1.0

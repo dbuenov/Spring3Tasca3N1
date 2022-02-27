@@ -1,24 +1,30 @@
 package Articles;
 
-import java.util.Objects;
-
 public class Flor extends Article{
 	
-	private String color;
-		
-	public Flor(int id, String color, float preu) {
-		this.id = id;
-		this.color = color;
-		this.preu = preu;
+	public Flor(int id, float preu, String color) {
+		this.id=id;
+		this.preu=preu;
+		this.color=color;
 	}
 
+	private String color;
+	
 	public String getColor() {
 		return color;
-	}	
+	}
+
+	public void setColor(String color) {
+		this.color = color;
+	}
 	
 	@Override
 	public String toString() {
-		return "Flor,"+this.id+","+this.color+","+this.preu+"\n"; 
+		return "F,"+this.id+","+this.preu+","+this.color+"\n"; 
 	}
+
+
+
+	
 
 }

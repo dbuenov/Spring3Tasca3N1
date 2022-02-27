@@ -1,0 +1,4 @@
+Ticket Numero: 1
+2 1.0
+Numero d'articles: 1
+Total: 1.0 €

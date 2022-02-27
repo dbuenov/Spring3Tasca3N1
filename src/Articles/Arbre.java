@@ -2,22 +2,22 @@ package Articles;
 
 public class Arbre extends Article{
 	
-	private String alçada;
-		
-	public Arbre(int id, String alçada, float preu) {
-		this.alçada = alçada;
-		this.preu = preu;
+	public Arbre(int id, float preu, String alçada) {
 		this.id=id;
-		
+		this.preu=preu;
+		this.alçada=alçada;
 	}
 
+	private String alçada;
+	
+			
 	public String getAlçada() {
 		return alçada;
 	}
 
 	@Override
 	public String toString() {
-		return "Arbre,"+this.id+","+this.alçada+","+this.preu+"\n"; 
+		return "A,"+this.id+","+this.preu+","+this.alçada+"\n"; 
 	}
 
 }

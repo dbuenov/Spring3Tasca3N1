@@ -21,10 +21,11 @@ public class Ticket {
 		total = 0;
 		numeroArticles = 0;
 	}
-	
+	/*
 	public Ticket(int codi, ArrayList<Article> articles, float total, int numeroArticles) {
 		
 	}
+	*/
 
 	public ArrayList<Article> getArticles() {
 		return articles;
@@ -50,7 +51,8 @@ public class Ticket {
 		numeroArticles --;
 	}
 	
-	public String imprimirTicket() {
+	@Override
+	public String toString() {
 		String ticket="Ticket Numero: "+this.codi+"\n";
 		for (Article article : articles) {
 			ticket += article.getId()+" "+article.getPreu()+"\n";

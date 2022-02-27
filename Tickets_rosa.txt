@@ -1,0 +1,6 @@
+Ticket Numero: 1
+1 13.0
+2 5.0
+3 13.0
+Numero d'articles: 3
+Total: 31.0 €

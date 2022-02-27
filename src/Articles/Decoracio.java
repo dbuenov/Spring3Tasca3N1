@@ -1,23 +1,26 @@
 package Articles;
 
-import java.util.Objects;
 
 public class Decoracio extends Article{
 	
-	private Material material;
-	
-	public Decoracio(int id, Material material, float preu) {
-		this.id = id;
-		this.material = material;
-		this.preu = preu;
+	public Decoracio(int id, float preu, Material material) {
+		this.id=id;
+		this.preu=preu;
+		this.material=material;
 	}
 
+	private Material material;
+	
 	public Material getMaterial() {
 		return material;
 	}
 	
+	public void setMaterial(Material material) {
+		this.material = material;
+	}
+
 	@Override
 	public String toString() {
-		return "Decoracio,"+this.id+","+this.material+","+this.preu+"\n"; 
+		return "D,"+this.id+","+this.preu+","+this.material+"\n"; 
 	}
 }
