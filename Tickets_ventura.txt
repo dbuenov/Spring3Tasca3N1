@@ -2,3 +2,9 @@ Ticket Numero: 1
 2 1.0
 Numero d'articles: 1
 Total: 1.0 €
+Ticket Numero: 2
+7 14.0
+8 17.0
+3 2.0
+Numero d'articles: 3
+Total: 33.0 €

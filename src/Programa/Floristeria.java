@@ -46,7 +46,7 @@ public class Floristeria {
 	}
 
 	// faig servir singleton per asegurar-me de no crear més d'una floristeria
-	
+
 	public static Floristeria getFloristeria() {
 		if(floristeria == null) {
 			floristeria = new Floristeria();			
@@ -69,54 +69,21 @@ public class Floristeria {
 	public String getTicketsAntics() {
 		return ticketsAntics;
 	}
-	
+
 	public float getValorVentes() {
 		return valorVentes;
 	}
 
-	// quan afeigeix un article sumo un a l'stock i un als id's
-	
-	public void addArticle(Article article) {
-		articles.add(article);
-		this.valorFloristeria += article.getPreu();
-		if (article instanceof Arbre) {
-			stockArbres++;
-		}else if (article instanceof Flor) {
-			stockFlors++;
-		}else if (article instanceof Decoracio) {
-			stockDecoracions++;
-		}
-		idArticle++;
 
-	}
-
-	//quan esborro un article resto un a l'stock, al id no faig res
-	public void removeArticle(Article article) {
-		this.articles.remove(article);
-		this.valorFloristeria -= article.getPreu();
-		if (article instanceof Arbre) {
-			stockArbres--;
-		}else if (article instanceof Flor) {
-			stockFlors--;
-		}else if (article instanceof Decoracio) {
-			stockDecoracions--;
-		}	
-	} 
-
-	public void addTicket(Ticket ticket) {
-		tickets.add(ticket);
-		this.codiTicket++;
-	}
-
-	public int stockArbres() {
+	public int getStockArbres() {
 		return stockArbres;
 	}
 
-	public int stockFlors() {
+	public int getStockFlors() {
 		return stockFlors;
 	}
 
-	public int stockDecoracions() {
+	public int getStockDecoracions() {
 		return stockDecoracions;	
 	}
 
@@ -136,10 +103,41 @@ public class Floristeria {
 		return codiTicket;
 	}
 
+
 	//STOCK
-	
+
+	// quan afeigeix un article sumo un a l'stock i un als id's
+
+	public void addArticle(Article article) {
+		articles.add(article);
+		this.valorFloristeria += article.getPreu();
+		if (article instanceof Arbre) {
+			stockArbres++;
+		}else if (article instanceof Flor) {
+			stockFlors++;
+		}else if (article instanceof Decoracio) {
+			stockDecoracions++;
+		}
+		idArticle++;
+
+	}
+
+	//quan esborro un article resto un a l'stock, al id no faig res
+
+	public void removeArticle(Article article) {
+		this.articles.remove(article);
+		this.valorFloristeria -= article.getPreu();
+		if (article instanceof Arbre) {
+			stockArbres--;
+		}else if (article instanceof Flor) {
+			stockFlors--;
+		}else if (article instanceof Decoracio) {
+			stockDecoracions--;
+		}	
+	} 	
+
 	//metode que crea un String amb tot l'stock
-	
+
 	public String creaStock() {
 		String stock="";
 		for (Article article : articles) {
@@ -147,12 +145,12 @@ public class Floristeria {
 		}
 		return stock;		
 	}	
-	
+
 	public String mostraArbres() {
 		String arbres="";
 		for (Article article : articles) {
 			if (article instanceof Arbre) {
-					arbres+=article.toString()+"\n";
+				arbres+=article.toString()+"\n";
 			}	
 		}
 		return arbres;
@@ -161,7 +159,7 @@ public class Floristeria {
 		String flors="";
 		for (Article article : articles) {
 			if (article instanceof Flor) {
-					flors+=article.toString()+"\n";
+				flors+=article.toString()+"\n";
 			}	
 		}
 		return flors;
@@ -170,7 +168,7 @@ public class Floristeria {
 		String decoracions="";
 		for (Article article : articles) {
 			if (article instanceof Decoracio) {
-					decoracions+=article.toString()+"\n";
+				decoracions+=article.toString()+"\n";
 			}	
 		}
 		return decoracions;
@@ -273,7 +271,12 @@ public class Floristeria {
 	}
 
 	//TICKETS
-	
+
+	public void addTicket(Ticket ticket) {
+		tickets.add(ticket);
+		this.codiTicket++;
+	}
+
 	//metode que crea un String amb el tickets
 	public String creaTickets() {
 		String vendes="";
@@ -284,16 +287,16 @@ public class Floristeria {
 	}
 
 	//crea un fitxer de text amb el tickets antics
-	
+
 	public void escriuTickets() {
 		String fitxer = "Tickets_"+this.nom.toLowerCase()+".txt";
 		ticketsAntics+=creaTickets();
-		
+
 		//actualitzo el valor de les ventes fetes
 		for (Ticket ticket: tickets) {
 			valorVentes+=ticket.getTotal();
 		}
-		
+
 		File file = new File(fitxer);
 		FileWriter fileWriter = null;
 		BufferedWriter bufferedWriter = null;
@@ -359,7 +362,7 @@ public class Floristeria {
 	}
 
 	// LOAD i SAVE Floristeria
-	
+
 	// Si existeixen dades antigues, les carrega en memoria	
 
 	public void recuperaFloristeria() {					
@@ -374,7 +377,7 @@ public class Floristeria {
 			this.codiTicket=Integer.parseInt(propietats.getProperty("codiTicket"));
 			this.valorVentes=Float.parseFloat(propietats.getProperty("valorVentes"));
 			dades.close();
-						
+
 		} catch (FileNotFoundException e) {
 			System.err.println("No trobo el fitxer de backup");
 		}catch (IOException e2) {
@@ -383,27 +386,27 @@ public class Floristeria {
 	}
 
 	//guarda la informació en fitxers quan es tanca l'aplicació 
-	
+
 	public void guardaFloristeria() {
 		Properties propietats = new Properties();
 		String fitxer = "Backup_"+nom.toLowerCase()+".data";
 		File file = new File(fitxer);
 		FileWriter fileWriter = null;
 		BufferedWriter bufferedWriter = null;
-		
+
 		escriuStock();
 		escriuTickets();
-		
+
 		propietats.setProperty("idArticle",String.valueOf(idArticle));		
 		propietats.setProperty("codiTicket",String.valueOf(codiTicket));
 		propietats.setProperty("valorVentes",String.valueOf(valorVentes));		
-		
+
 		try {
 			fileWriter = new FileWriter(file);
 			bufferedWriter = new BufferedWriter(fileWriter);
 			propietats.store(bufferedWriter,"propietats");
 			System.out.println("Creo un backup amb totes les dades");
-			
+
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
 		}
@@ -411,7 +414,7 @@ public class Floristeria {
 			if (bufferedWriter != null) {
 				try {
 					bufferedWriter.close();
-					
+
 				} catch (IOException e) {
 					System.err.println(e.getMessage());
 				}
